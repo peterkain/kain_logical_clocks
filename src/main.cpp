@@ -9,10 +9,26 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <mutex>
 
 using namespace std;
 using namespace asio::ip;
 using namespace chrono_literals;
+
+void print_message(std::string msg, LamportClock& clock,
+                   lamport_clock_t time = 0, bool receive = false) {
+    static mutex m;
+    lock_guard guard{m};
+    if (!receive) {
+        clock.update();
+        spdlog::info("{} / Lamport Time: {}", msg, clock.get_time());
+    }
+    else {
+        clock.receive(time);
+        spdlog::info("Received Message: {} / Lamport Time: {}",
+                     msg, clock.get_time());
+    }
+}
 
 void listen_func(unsigned short port, LamportClock& clock) {
     asio::io_context ctx;
@@ -25,23 +41,19 @@ void listen_func(unsigned short port, LamportClock& clock) {
         tcp::iostream strm{acc.accept()};
         getline(strm, msg);
         strm >> time;
-        clock.receive(time);
-        spdlog::info("Received Message: {} / Lamport Time: {}", msg, clock.get_time());
+        print_message(msg, clock, time, true);
     }
 }
 
 void connect1(unsigned short connect, unsigned short port, LamportClock& clock) {
     tcp::iostream strm{"localhost", to_string(connect)};
     if (strm) {
-        clock.update();
-        spdlog::info("One event... / Lamport Time: {}", clock.get_time());
+        print_message("One event...", clock);
         this_thread::sleep_for(3s);
-        clock.update();
-        spdlog::info("Another event... / Lamport Time: {}", clock.get_time());
-        clock.update();
+        print_message("Another event...", clock);
+        print_message("Sending a message!", clock);
         strm << "Hello from " << port << endl;
         strm << clock.get_time() << endl;
-        spdlog::info("Sent a message. / Lamport Time: {}", clock.get_time());
     }
     else {
         spdlog::error("Failed to connect");
@@ -51,13 +63,11 @@ void connect1(unsigned short connect, unsigned short port, LamportClock& clock) 
 void connect2(unsigned short connect, unsigned short port, LamportClock& clock) {
     tcp::iostream strm{"localhost", to_string(connect)};
     if (strm) {
-        clock.update();
-        spdlog::info("Yet another event... / Lamport Time: {}", clock.get_time());
+        print_message("Yet another event...", clock);
         this_thread::sleep_for(1s);
-        clock.update();
+        print_message("Sending a message!", clock);
         strm << "Bye from " << port << endl;
         strm << clock.get_time() << endl;
-        spdlog::info("Sent a message. / Lamport Time: {}", clock.get_time());
     }
     else {
         spdlog::error("Failed to connect");
@@ -85,5 +95,7 @@ int main(int argc, char** argv) {
     thread c1{connect1, connects[0], port, ref(clock)};
     thread c2{connect2, connects[1], port, ref(clock)};
 
+    c1.join();
+    c2.join();
     t.join();
 }
