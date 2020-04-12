@@ -6,3 +6,4 @@
 \contentsline {section}{\numberline {2.2}Logische Uhren}{4}{section.2.2}% 
 \contentsline {section}{\numberline {2.3}Lamport Uhr}{4}{section.2.3}% 
 \contentsline {section}{\numberline {2.4}Lamport Uhren in C++}{5}{section.2.4}% 
+\contentsline {section}{\numberline {2.5}Anwendungsfälle}{6}{section.2.5}% 

@@ -69,31 +69,34 @@ Das C++ Beispiel erwartet sich drei gestartete Prozesse. Es wird der Port angege
     $ ./process -p 1234 -c 1235 1236
     Listening. Press any key to connect...
 \end{verbatim}
-Danach noch zwei Prozesse starten, die auf den Ports 1235 und 1236 listenen, es wird gewartet, bis der Nutzer dies getan hat. Danach kann man bei einem beliebigen (oder allen drei) Prozessen einfach Enter drücken, woraufhin Events simuliert werden. Pro Event wird die Lamport Zeit ausgegeben. Man kann die Ausgabe auch bei anderen Prozessen beobachten.\\
-Drücken wir mal bei einem Prozess Enter:\\
+Danach noch zwei Prozesse starten, die auf den Ports 1235 und 1236 listenen, es wird gewartet, bis der Nutzer dies getan hat. Danach kann man bei einem beliebigen (oder allen drei) Prozessen einfach Enter drücken, woraufhin Events simuliert werden. Pro Event wird die Lamport Zeit ausgegeben. Man kann die Ausgabe auch bei anderen Prozessen beobachten. Drücken wir mal bei einem Prozess Enter:\\
 Prozess 1 (Enter gedrückt):
 \begin{verbatim}
-    $ ./process -p 1234 -c 1235 1236
-    Listening. Press any key to connect...
+$ ./process -p 1234 -c 1235 1236
+Listening. Press any key to connect...
 
-    [2020-04-12 15:26:50.674] [info] Yet another event... / Lamport Time: 1
-    [2020-04-12 15:26:50.674] [info] One event... / Lamport Time: 2
-    [2020-04-12 15:26:51.674] [info] Sent a message. / Lamport Time: 3
-    [2020-04-12 15:26:53.674] [info] Another event... / Lamport Time: 4
-    [2020-04-12 15:26:53.675] [info] Sent a message. / Lamport Time: 5
+[2020-04-12 15:26:50.674] [info] Yet another event... / Lamport Time: 1
+[2020-04-12 15:26:50.674] [info] One event... / Lamport Time: 2
+[2020-04-12 15:26:51.674] [info] Sent a message. / Lamport Time: 3
+[2020-04-12 15:26:53.674] [info] Another event... / Lamport Time: 4
+[2020-04-12 15:26:53.675] [info] Sent a message. / Lamport Time: 5
 \end{verbatim}
 Prozess 2:
 \begin{verbatim}
-    $ ./process -p 1235 -c 1234 1236
-    Listening. Press any key to connect...
-    [2020-04-12 15:26:53.675] [info] Received Message: Hello from 1234 / Lamport Time: 6
+$ ./process -p 1235 -c 1234 1236
+Listening. Press any key to connect...
+[2020-04-12 15:26:53.675] [info] Received Message: Hello from 1234 / Lamport Time: 6
 \end{verbatim}
 Prozess 3:
 \begin{verbatim}
-    $ ./process -p 1236 -c 1234 1235
-    Listening. Press any key to connect...
-    [2020-04-12 15:26:51.674] [info] Received Message: Bye from 1234 / Lamport Time: 4
+$ ./process -p 1236 -c 1234 1235
+Listening. Press any key to connect...
+[2020-04-12 15:26:51.674] [info] Received Message: Bye from 1234 / Lamport Time: 4
 \end{verbatim}
+Die Ausgabe der Lamport Time ist dabei die eigene Lamport Time, nachdem das Event eingetreten ist. Wir können sicher sagen, dass ``Sent a message`` mit den Lamport Zeiten 3 und 5 bei Prozess 1 vor ``Received Message`` mit den Lamport Zeiten 6 (Prozess 2) und 4 (Prozess 3) passiert ist. Wir beobachten dabei ebenfalls, dass die Lamport Zeit von Prozess 2 und 3 anhand der gesendeten von Prozess 1 geupdated wurde. Ebenfalls erkennen wir die Reihenfolge der Events in Prozess 1 klar.\\
+Würden wir jetzt in Prozess 2 und dann in Prozess 3 Enter drücken, würde sich das wiederholen - das wär doch fad. Versuchen wir also, dass Prozess 2 und Prozess 3 gleichzeitig Events haben! Wir drücken also so gleichzeitig es geht für Prozess 2 und Prozess 3 Enter. Auch hier sehen wir, dass die Lamport Zeit immer steigt. Zwar wahrscheinlich nicht in Einerschritten, wie es nacheinander der Fall wäre, aber darum geht es uns ja auch nicht.
 
+\section{Anwendungsfälle}
+Nach dem Lesen der Kapitel sind einem selber vielleicht schon der eine oder andere Anwendungsfall in den Sinn gekommen. Noch weitere Beispiele sind zum Beispiel: Jede Software, die Dinge koordiniert. Zum Beispiel: Es ist ein Platz bei einer Vorführung frei und wir haben zwei Anfragen bekommen. Wer war zuerst, also wer bekommt den Platz? Oder beispielsweise kann man bei Multiversion Concurrency Control einer Datenbank logische Uhren einsetzen, um jeder Version eine eindeutige Nummer zuzuweisen und bestimmen zu können, welche älter ist.
 
 \end{document}
