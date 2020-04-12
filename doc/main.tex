@@ -64,6 +64,36 @@ Stellen wir uns folgende Situation vor: Es gibt zwei Prozesse: P und Q. Im Proze
 Wir können jedoch sicher sagen, dass P1 $\rightarrow$ P2, da P1 und P2 am selben Prozess passiert sind. Wenn P3 ein Event wäre, dass eine Nachricht an Q schickt und Q2 ein Event, welches diese empfängt, dann wäre P3 $\rightarrow$ Q2 auch sicher, da man eine Nachricht erst empfangen kann, wenn sie gesendet wurde.\\
 Nun, da wir über die Theorie gehört haben, schauen wir uns doch an, wie sowas in der Praxis aussieht.
 \section{Lamport Uhren in C++}
+Das C++ Beispiel erwartet sich drei gestartete Prozesse. Es wird der Port angegeben, auf dem der Prozess listenen soll, sowie die zwei Ports, wo die zwei anderen Prozesse listenen. Ein Beispielaufruf wäre:
+\begin{verbatim}
+    $ ./process -p 1234 -c 1235 1236
+    Listening. Press any key to connect...
+\end{verbatim}
+Danach noch zwei Prozesse starten, die auf den Ports 1235 und 1236 listenen, es wird gewartet, bis der Nutzer dies getan hat. Danach kann man bei einem beliebigen (oder allen drei) Prozessen einfach Enter drücken, woraufhin Events simuliert werden. Pro Event wird die Lamport Zeit ausgegeben. Man kann die Ausgabe auch bei anderen Prozessen beobachten.\\
+Drücken wir mal bei einem Prozess Enter:\\
+Prozess 1 (Enter gedrückt):
+\begin{verbatim}
+    $ ./process -p 1234 -c 1235 1236
+    Listening. Press any key to connect...
+
+    [2020-04-12 15:26:50.674] [info] Yet another event... / Lamport Time: 1
+    [2020-04-12 15:26:50.674] [info] One event... / Lamport Time: 2
+    [2020-04-12 15:26:51.674] [info] Sent a message. / Lamport Time: 3
+    [2020-04-12 15:26:53.674] [info] Another event... / Lamport Time: 4
+    [2020-04-12 15:26:53.675] [info] Sent a message. / Lamport Time: 5
+\end{verbatim}
+Prozess 2:
+\begin{verbatim}
+    $ ./process -p 1235 -c 1234 1236
+    Listening. Press any key to connect...
+    [2020-04-12 15:26:53.675] [info] Received Message: Hello from 1234 / Lamport Time: 6
+\end{verbatim}
+Prozess 3:
+\begin{verbatim}
+    $ ./process -p 1236 -c 1234 1235
+    Listening. Press any key to connect...
+    [2020-04-12 15:26:51.674] [info] Received Message: Bye from 1234 / Lamport Time: 4
+\end{verbatim}
 
 
 \end{document}
