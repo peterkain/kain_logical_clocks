@@ -1,0 +1,3 @@
+option('asio_include_dir', type : 'string', value : '/home/thematrix/Schreibtisch/5AHIF/NVS/extern/asio/include')
+option('cli11_include_dir', type : 'string', value : '/home/thematrix/Schreibtisch/5AHIF/POS/C++Exercises/kain_i15086/extern/cli11')
+option('spdlog_include_dir', type : 'string', value : '/home/thematrix/Schreibtisch/5AHIF/POS/C++Exercises/kain_i15086/extern/SPDLog')
