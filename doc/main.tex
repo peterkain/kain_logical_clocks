@@ -48,7 +48,7 @@ Im Fall einer Lamport Uhr wird dieser Ansatz dadurch erreicht, dass beim Senden 
 \begin{enumerate}
 	\item Generell wird der Zähler bei jedem intern auftretenden Event (also im eigenen Prozess) um Eins erhöht.
 	\item Wird eine Nachricht an einen anderen Prozess gesendet, wird der Zähler um Eins erhöht und mitgesendet.
-	\item Wird eine Nachricht empfangen, vergleicht man die mitgesendete Zeit mit der eigenen. Der lokale Zähler wird dann der höhere Wert der beiden Zeitpunkte, wiederum erhöht um Eins. Allgemein kann man sage
+	\item Wird eine Nachricht empfangen, vergleicht man die mitgesendete Zeit mit der eigenen. Der lokale Zähler wird dann der höhere Wert der beiden Zeitpunkte, wiederum erhöht um Eins. Allgemein kann man sagen:
 	\begin{verbatim}
 		eigeneZeit = max(eigeneZeit, empfangeneZeit) + 1
 	\end{verbatim}
